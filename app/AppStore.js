@@ -11,9 +11,9 @@ import ActionTypes from './ActionTypes';
 import AppDispatcher from './AppDispatcher';
 
 var store = {
-    on: false,
-    updating: false
+    lights: []
 }
+
 
 class AppStore extends ReduceStore {
 
@@ -30,12 +30,24 @@ class AppStore extends ReduceStore {
         console.log('reduce');
         console.log(state);
         switch (action.type) {
+            case ActionTypes.INITIALIZED:
+                state.lights = action.data;
+                return JSON.parse(JSON.stringify(state));
+
+            case ActionTypes.LIGHT_UPDATING:
+                state.updating = true;
+                return JSON.parse(JSON.stringify(state));
+
             case ActionTypes.LIGHT_ON:
-                state.on = true;
+                var lightId = action.lightId;
+                state.lights[lightId].on = true;
+                state.lights[lightId].updating = false;
                 return JSON.parse(JSON.stringify(state));
 
             case ActionTypes.LIGHT_OFF:
-                state.on = false;
+                var lightId = action.lightId;
+                state.lights[lightId].on = false;
+                state.lights[lightId].updating = false;
                 return JSON.parse(JSON.stringify(state));
 
             default:

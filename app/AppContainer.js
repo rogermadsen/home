@@ -15,6 +15,7 @@ function getState() {
   return {
       store: AppStore.getState(),
 
+      initialize: Actions.initialize,
       onLightOn: Actions.turnOnLight,
       onLightOff: Actions.turnOffLight,
       onStartSunrise: Actions.startSunrise

@@ -4,16 +4,45 @@ import AppDispatcher from './AppDispatcher';
 import ActionTypes from './ActionTypes';
 
 module.exports = {
-    turnOnLight: function (lightId) {
+    initialize: function () {
+        // Get current state of lights and everything from the API.
+        console.log('INITIALIZE');
+
         AppDispatcher.dispatch({
-            type: ActionTypes.LIGHT_ON,
+            type: ActionTypes.INITIALIZING
+        });
+
+        fetch('/api', {
+            method: 'get'
+        }).then(function (response) {
+            response.json().then(function(data) {
+                console.log(data);
+
+                AppDispatcher.dispatch({
+                    type: ActionTypes.INITIALIZED,
+                    data: data
+                });
+
+            });
+        }).catch(function (err) {
+            // Error :(
+        });
+    },
+
+    turnOnLight: function (lightId) {
+        console.log('Lighton: ' + lightId);
+        AppDispatcher.dispatch({
+            type: ActionTypes.LIGHT_UPDATING,
             lightId: lightId
         });
 
-        fetch('/api/turnOnLight', {
+        fetch('/api/turnOnLight/' + lightId, {
             method: 'get'
         }).then(function (response) {
-
+            AppDispatcher.dispatch({
+                type: ActionTypes.LIGHT_ON,
+                lightId: lightId
+            });
         }).catch(function (err) {
             // Error :(
         });
@@ -21,14 +50,17 @@ module.exports = {
 
     turnOffLight: function (lightId) {
         AppDispatcher.dispatch({
-            type: ActionTypes.LIGHT_OFF,
+            type: ActionTypes.LIGHT_UPDATING,
             lightId: lightId
         });
 
-        fetch('/api/turnOffLight', {
+        fetch('/api/turnOffLight/' + lightId, {
             method: 'get'
         }).then(function (response) {
-
+            AppDispatcher.dispatch({
+                type: ActionTypes.LIGHT_OFF,
+                lightId: lightId
+            });
         }).catch(function (err) {
             // Error :(
         });

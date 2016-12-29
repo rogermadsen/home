@@ -7,16 +7,16 @@ module.exports = function (props) {
 
     function onToggle(temp, on) {
         if (on) {
-            props.onLightOn();
+            props.onLightOn(props.id);
         } else {
-            props.onLightOff();
+            props.onLightOff(props.id);
         }
     }
 
-    console.log('-- LightSwitch --');
-    console.log(props);
-    var on = props.store.on === true;
+    var light = props.store.lights[props.id];
+    var on = light.on === true;
+    var updating = light.updating === true;
     return (
-        <Toggle label='testing' onToggle={onToggle} toggled={on}/>
+        <Toggle label={props.label} onToggle={onToggle} toggled={on} disabled={updating}/>
     )
 };

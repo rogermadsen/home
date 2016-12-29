@@ -62,8 +62,6 @@
 
 	_reactDom2.default.render(_react2.default.createElement(_AppContainer2.default, null), document.getElementById('root'));
 
-	//ReactDOM.render(<div />, document.getElementById('root'));
-
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
@@ -98,6 +96,7 @@
 	  return {
 	    store: _AppStore2.default.getState(),
 
+	    initialize: _Actions2.default.initialize,
 	    onLightOn: _Actions2.default.turnOnLight,
 	    onLightOff: _Actions2.default.turnOffLight,
 	    onStartSunrise: _Actions2.default.startSunrise
@@ -144,15 +143,29 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	var Actions = __webpack_require__(436);
+
 	var Hello = __webpack_require__(410);
 	var LightSwitch = __webpack_require__(411);
 	var SunriseButton = __webpack_require__(412);
 
 	(0, _reactTapEventPlugin2.default)();
+	Actions.initialize();
 
 	module.exports = function (props) {
 
+	    console.log('start');
 	    console.log(props);
+
+	    var lights = props.store.lights.map(function (light, index) {
+	        return _react2.default.createElement(
+	            'div',
+	            { key: index },
+	            _react2.default.createElement(LightSwitch, _extends({ id: index, label: light.name }, props)),
+	            _react2.default.createElement('br', null),
+	            _react2.default.createElement('br', null)
+	        );
+	    });
 
 	    return _react2.default.createElement(
 	        _MuiThemeProvider2.default,
@@ -160,16 +173,7 @@
 	        _react2.default.createElement(
 	            'div',
 	            null,
-	            _react2.default.createElement(
-	                'div',
-	                null,
-	                _react2.default.createElement(Hello, props)
-	            ),
-	            _react2.default.createElement(
-	                'div',
-	                null,
-	                _react2.default.createElement(LightSwitch, _extends({ id: '123' }, props))
-	            ),
+	            lights,
 	            _react2.default.createElement(
 	                'div',
 	                null,
@@ -37525,16 +37529,16 @@
 
 	    function onToggle(temp, on) {
 	        if (on) {
-	            props.onLightOn();
+	            props.onLightOn(props.id);
 	        } else {
-	            props.onLightOff();
+	            props.onLightOff(props.id);
 	        }
 	    }
 
-	    console.log('-- LightSwitch --');
-	    console.log(props);
-	    var on = props.store.on === true;
-	    return _react2.default.createElement(_Toggle2.default, { label: 'testing', onToggle: onToggle, toggled: on });
+	    var light = props.store.lights[props.id];
+	    var on = light.on === true;
+	    var updating = light.updating === true;
+	    return _react2.default.createElement(_Toggle2.default, { label: props.label, onToggle: onToggle, toggled: on, disabled: updating });
 	};
 
 /***/ },
@@ -37997,9 +38001,12 @@
 	'use strict';
 
 	module.exports = {
-	  LIGHT_ON: 'LIGHT_ON',
-	  LIGHT_OFF: 'LIGHT_OFF',
-	  LIGHT_TOGGLE: 'LIGHT_TOGGLE'
+	    INITIALIZING: 'INITIALIZING',
+	    INITIALIZED: 'INITIALIZED',
+	    LIGHT_ON: 'LIGHT_ON',
+	    LIGHT_OFF: 'LIGHT_OFF',
+	    LIGHT_UPDATING: 'LIGHT_UPDATING',
+	    LIGHT_TOGGLE: 'LIGHT_TOGGLE'
 	};
 
 /***/ },
@@ -39839,28 +39846,63 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	module.exports = {
-	    turnOnLight: function turnOnLight(lightId) {
+	    initialize: function initialize() {
+	        // Get current state of lights and everything from the API.
+	        console.log('INITIALIZE');
+
 	        _AppDispatcher2.default.dispatch({
-	            type: _ActionTypes2.default.LIGHT_ON,
+	            type: _ActionTypes2.default.INITIALIZING
+	        });
+
+	        fetch('/api', {
+	            method: 'get'
+	        }).then(function (response) {
+	            response.json().then(function (data) {
+	                console.log(data);
+
+	                _AppDispatcher2.default.dispatch({
+	                    type: _ActionTypes2.default.INITIALIZED,
+	                    data: data
+	                });
+	            });
+	        }).catch(function (err) {
+	            // Error :(
+	        });
+	    },
+
+	    turnOnLight: function turnOnLight(lightId) {
+	        console.log('Lighton: ' + lightId);
+	        _AppDispatcher2.default.dispatch({
+	            type: _ActionTypes2.default.LIGHT_UPDATING,
 	            lightId: lightId
 	        });
 
-	        fetch('/api/turnOnLight', {
+	        fetch('/api/turnOnLight/' + lightId, {
 	            method: 'get'
-	        }).then(function (response) {}).catch(function (err) {
+	        }).then(function (response) {
+	            _AppDispatcher2.default.dispatch({
+	                type: _ActionTypes2.default.LIGHT_ON,
+	                lightId: lightId
+	            });
+	        }).catch(function (err) {
 	            // Error :(
 	        });
 	    },
 
 	    turnOffLight: function turnOffLight(lightId) {
 	        _AppDispatcher2.default.dispatch({
-	            type: _ActionTypes2.default.LIGHT_OFF,
+	            type: _ActionTypes2.default.LIGHT_UPDATING,
 	            lightId: lightId
 	        });
 
-	        fetch('/api/turnOffLight', {
+	        fetch('/api/turnOffLight/' + lightId, {
 	            method: 'get'
-	        }).then(function (response) {}).catch(function (err) {
+	        }).then(function (response) {
+	            _AppDispatcher2.default.dispatch({
+	                type: _ActionTypes2.default.LIGHT_OFF,
+	                lightId: lightId
+	            });
+	        }).catch(function (err) {
 	            // Error :(
 	        });
 	    },
@@ -39914,8 +39956,7 @@
 
 
 	var store = {
-	    on: false,
-	    updating: false
+	    lights: []
 	};
 
 	var AppStore = function (_ReduceStore) {
@@ -39939,12 +39980,24 @@
 	            console.log('reduce');
 	            console.log(state);
 	            switch (action.type) {
+	                case _ActionTypes2.default.INITIALIZED:
+	                    state.lights = action.data;
+	                    return JSON.parse(JSON.stringify(state));
+
+	                case _ActionTypes2.default.LIGHT_UPDATING:
+	                    state.updating = true;
+	                    return JSON.parse(JSON.stringify(state));
+
 	                case _ActionTypes2.default.LIGHT_ON:
-	                    state.on = true;
+	                    var lightId = action.lightId;
+	                    state.lights[lightId].on = true;
+	                    state.lights[lightId].updating = false;
 	                    return JSON.parse(JSON.stringify(state));
 
 	                case _ActionTypes2.default.LIGHT_OFF:
-	                    state.on = false;
+	                    var lightId = action.lightId;
+	                    state.lights[lightId].on = false;
+	                    state.lights[lightId].updating = false;
 	                    return JSON.parse(JSON.stringify(state));
 
 	                default:

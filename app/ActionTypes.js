@@ -1,0 +1,5 @@
+module.exports = {
+  LIGHT_ON: 'LIGHT_ON',
+  LIGHT_OFF: 'LIGHT_OFF',
+  LIGHT_TOGGLE: 'LIGHT_TOGGLE'
+};

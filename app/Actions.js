@@ -67,6 +67,22 @@ module.exports = {
 
     },
 
+    setLightBrightness: function(lightId, brightnessValue) {
+        console.log('Update bri: ' + brightnessValue);
+        fetch('/api/setLightBrightness/' + lightId + '/' + brightnessValue, {
+            method: 'get'
+        }).then(function (response) {
+            /*
+            AppDispatcher.dispatch({
+                type: ActionTypes.LIGHT_OFF,
+                lightId: lightId
+            });
+            */
+        }).catch(function (err) {
+            // Error :(
+        });
+    },
+
     startSunrise() {
         fetch('/api/startSunset', {
             method: 'get'

@@ -22,7 +22,7 @@ console.log('start');
     console.log(props);
 
     var lights = props.store.lights.map((light, index) => {
-        return <div key={index}><LightSwitch id={index} label={light.name} {...props}/><br/><br/></div>
+        return <div key={index}><LightSwitch id={index} label={light.name} {...props}/><br/></div>
     });
 
     return (<MuiThemeProvider>

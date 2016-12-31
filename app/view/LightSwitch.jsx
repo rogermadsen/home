@@ -4,6 +4,8 @@ import React from 'react';
 import Toggle from 'material-ui/Toggle';
 import Slider from 'material-ui/Slider';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import RaisedButton from 'material-ui/RaisedButton';
+import { HuePicker } from 'react-color';
 
 module.exports = function (props) {
     var brightessSliderValue;
@@ -28,11 +30,23 @@ module.exports = function (props) {
         props.onLightBrightnessUpdate(props.id, brightessSliderValue);
     }
 
+    function onHueSliderChange(color) {
+        var val = 65535 * (color.hsl.h / 360);
+        console.log(val);
+        props.onLightHueUpdate(props.id, val);
+    }
+
     // Only add brightness slider if the light is dimmable.
     let slider;
     if (light.supportsBrightness) {
         slider = <Slider value={light.brightness} min={0} max={255} onChange={onSliderChange} onDragStop={onSliderStop}/>
     }
+
+    let hueSlider;
+    if (light.supportsHue) {
+        hueSlider = <HuePicker width='100%' onChangeComplete={onHueSliderChange}/>
+    }
+
 
     return (
         <div>
@@ -40,6 +54,7 @@ module.exports = function (props) {
         <CardText>
         <Toggle label={props.label} onToggle={onToggle} toggled={on} disabled={updating}/>
         {slider}
+        {hueSlider}
         </CardText>
         </Card>
         </div>

@@ -30,7 +30,7 @@ class AppStore extends ReduceStore {
         console.log('reduce');
         console.log(state);
         switch (action.type) {
-            case ActionTypes.INITIALIZED:
+            case ActionTypes.UPDATED:
                 state.lights = action.data;
                 return JSON.parse(JSON.stringify(state));
 

@@ -14,23 +14,27 @@ var LightSwitch = require('./LightSwitch');
 var SunriseButton = require('./SunriseButton');
 
 injectTapEventPlugin();
-Actions.initialize();
+
+Actions.update();
+//setInterval(function () {
+//    Actions.update();
+//}, 2000);
 
 module.exports = function (props) {
-
-console.log('start');
-    console.log(props);
-
     var lights = props.store.lights.map((light, index) => {
-        return <div key={index}><LightSwitch id={index} label={light.name} {...props}/><br/></div>
+        return (
+            <div key={index}>
+                <LightSwitch id={index} label={light.name} {...props}/><br/>
+            </div>)
     });
 
-    return (<MuiThemeProvider>
-      <div>
-        {lights}
-        <div>
-            <SunriseButton {...props}/>
-        </div>
-      </div>
-    </MuiThemeProvider>)
+    return (
+        <MuiThemeProvider>
+            <div>
+                {lights}
+                <div>
+                    <SunriseButton {...props}/>
+                </div>
+            </div>
+        </MuiThemeProvider>)
 }

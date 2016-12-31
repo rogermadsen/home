@@ -4,25 +4,20 @@ import AppDispatcher from './AppDispatcher';
 import ActionTypes from './ActionTypes';
 
 module.exports = {
-    initialize: function () {
+    update: function () {
         // Get current state of lights and everything from the API.
-        console.log('INITIALIZE');
-
         AppDispatcher.dispatch({
-            type: ActionTypes.INITIALIZING
+            type: ActionTypes.UPDATING
         });
 
         fetch('/api', {
             method: 'get'
         }).then(function (response) {
             response.json().then(function(data) {
-                console.log(data);
-
                 AppDispatcher.dispatch({
-                    type: ActionTypes.INITIALIZED,
+                    type: ActionTypes.UPDATED,
                     data: data
                 });
-
             });
         }).catch(function (err) {
             // Error :(
@@ -70,6 +65,21 @@ module.exports = {
     setLightBrightness: function(lightId, brightnessValue) {
         console.log('Update bri: ' + brightnessValue);
         fetch('/api/setLightBrightness/' + lightId + '/' + brightnessValue, {
+            method: 'get'
+        }).then(function (response) {
+            /*
+            AppDispatcher.dispatch({
+                type: ActionTypes.LIGHT_OFF,
+                lightId: lightId
+            });
+            */
+        }).catch(function (err) {
+            // Error :(
+        });
+    },
+
+    setLightHue: function(lightId, hueVal) {
+        fetch('/api/lights/' + lightId + '/hue/' + hueVal, {
             method: 'get'
         }).then(function (response) {
             /*

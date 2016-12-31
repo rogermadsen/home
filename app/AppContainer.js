@@ -19,6 +19,7 @@ function getState() {
       onLightOn: Actions.turnOnLight,
       onLightOff: Actions.turnOffLight,
       onLightBrightnessUpdate: Actions.setLightBrightness,
+      onLightHueUpdate: Actions.setLightHue,
       onStartSunrise: Actions.startSunrise
   };
 }

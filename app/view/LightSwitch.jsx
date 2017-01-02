@@ -47,7 +47,6 @@ module.exports = function (props) {
         hueSlider = <HuePicker width='100%' onChangeComplete={onHueSliderChange}/>
     }
 
-
     return (
         <div>
         <Card>

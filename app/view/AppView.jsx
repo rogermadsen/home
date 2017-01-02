@@ -7,11 +7,14 @@ import Checkbox from 'material-ui/Checkbox';
 import Toggle from 'material-ui/Toggle';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import AppBar from 'material-ui/AppBar';
+import { Router, Route, hashHistory, IndexRoute } from 'react-router'
 var Actions = require('../Actions');
 
 var Hello = require('./Hello');
 var LightSwitch = require('./LightSwitch');
 var SunriseButton = require('./SunriseButton');
+var RoomListView = require('./RoomListView');
+var RoomView = require('./RoomView');
 
 injectTapEventPlugin();
 
@@ -20,21 +23,35 @@ Actions.update();
 //    Actions.update();
 //}, 2000);
 
-module.exports = function (props) {
-    var lights = props.store.lights.map((light, index) => {
-        return (
-            <div key={index}>
-                <LightSwitch id={index} label={light.name} {...props}/><br/>
-            </div>)
-    });
+const routes = [{
+    path: '/',
+    component: RoomListView
+    //childRoutes: [
+    //    { path: '/room/:id', component: RoomView }
+        /*
+        {
+            path: '/posts',
+            component: Posts,
+            childRoutes: [ { path: '/post/:nr', component: Post } ]
+        },
+        { path: '*', component: NoMatch}*/
+    //]
+}, {
+    path: '/room',
+    component: RoomView
+}];
 
+
+module.exports = function (props) {
     return (
         <MuiThemeProvider>
             <div>
-                {lights}
-                <div>
-                    <SunriseButton {...props}/>
-                </div>
+                <Router history={hashHistory}>
+                    <Route path='/' component='RoomListView'/>
+                    <Route path='/room1' component='Hello' />
+                </Router>
             </div>
         </MuiThemeProvider>)
 }
+
+//                    <!--<Route path='/room' foo='bar' {...props} component={props => <Hello {...props} />} />-->

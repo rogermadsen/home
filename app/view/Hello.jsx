@@ -5,31 +5,16 @@ import React from 'react';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 
-
-/*
-module.exports = React.createClass({
-    displayName: 'HelloReact',
-    render: function() {
-        return <RaisedButton label='Start sunset' onTouchTap={() => { console.log('test!!'); }}/>
-
+class Hello extends React.Component {
+    constructor(props) {
+        const divProps = Object.assign({}, props);
+        super(divProps);
     }
-})
-*/
 
-
-module.exports = function (props) {
-
-    console.log(props);
-
-    return (<p>HEJHEJ</p>)
+    render() {
+        //console.log(this.props);
+        return <p>ROGER ÄR BÄST!</p>;
+    }
 }
 
-/*
-class Photo extends React.Component {
-  render() {
-    return <p>ROGER ÄR BÄST!</p>;
-  }
-}
-
-module.exports = Photo;
-*/
+module.exports = Hello;

@@ -7,8 +7,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 
 class Hello extends React.Component {
     constructor(props) {
-        const divProps = Object.assign({}, props);
-        super(divProps);
+        super(props);
     }
 
     render() {

@@ -16,42 +16,35 @@ var SunriseButton = require('./SunriseButton');
 var RoomListView = require('./RoomListView');
 var RoomView = require('./RoomView');
 
-injectTapEventPlugin();
+//injectTapEventPlugin();
 
 Actions.update();
 //setInterval(function () {
 //    Actions.update();
 //}, 2000);
 
-const routes = [{
-    path: '/',
-    component: RoomListView
-    //childRoutes: [
-    //    { path: '/room/:id', component: RoomView }
-        /*
-        {
-            path: '/posts',
-            component: Posts,
-            childRoutes: [ { path: '/post/:nr', component: Post } ]
-        },
-        { path: '*', component: NoMatch}*/
-    //]
-}, {
-    path: '/room',
-    component: RoomView
-}];
-
+const route = (
+    <Router history={hashHistory}>
+      <Route path='/' component={RoomListView} />
+      <Route path='/room1' component={Hello} />
+    </Router>
+);
 
 module.exports = function (props) {
     return (
         <MuiThemeProvider>
-            <div>
-                <Router history={hashHistory}>
-                    <Route path='/' component='RoomListView'/>
-                    <Route path='/room1' component='Hello' />
-                </Router>
-            </div>
-        </MuiThemeProvider>)
+        {getRoutes(props)}
+        </MuiThemeProvider>
+    )
+}
+
+function getRoutes(props) {
+    return (
+        <Router history={hashHistory}>
+          <Route path='/' component={RoomListView} />
+          <Route path='/room1' component={Hello} />
+        </Router>
+    );
 }
 
 //                    <!--<Route path='/room' foo='bar' {...props} component={props => <Hello {...props} />} />-->
